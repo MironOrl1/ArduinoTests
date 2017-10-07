@@ -1,0 +1,79 @@
+ #define czujnikTemp A1
+ #define czujnikGazu A2
+ #define buzzer 3
+ 
+float temp = 0
+float gaz = 0
+int stan = 1
+
+//stan 1 - start oraz gdy ostatnia Temp i Gaz w normie
+//stan 2 - gdy ostatnio przekroczono Temp ale Gaz w normie
+//stan 3 - gdy ostatnio przekroczono Gaz ale Temp w normie
+//stan 4 - Gdy ostatnio przekroczono Gaz i Temp
+
+
+ void setings() {
+ 
+ pinMode(buzzer, OUTPUT)
+ digitalWrite(buzzer , LOW)
+ 
+ }
+ 
+ 
+ 
+ void loop() {
+ 
+ if PrzekroczonoMinTemp(-20)==true {
+ 
+   digitalWrite(buzzer , HIGH)
+   
+  if PrzekroczonoGaz(wart)==true{
+  
+    
+  
+  
+  }
+ else
+   digitalWrite(buzzer , LOW)
+ 
+ }
+ 
+ 
+ 
+switch (stan) {
+    case 1:
+      
+      if PrzekroczonoTemp()
+      
+      break;
+    case 2:
+      //do something when var equals 2
+      break;
+    default:
+      // if nothing else matches, do the default
+      // default is optional
+    break;
+  } 
+ 
+ }
+ 
+ 
+ boolean PrzekroczonoMinTemp(tempLimit) {
+ 
+ if analogRead(czujnikTemp) < tempLimit then
+  return true
+ else
+  return false
+ end
+ 
+ }
+ 
+  boolean PrzekroczonoSterzenieGazu(GazLimit) {
+ 
+ if analogRead(czujnikGazu) > GazLimit then
+  return true
+ else
+  return false
+ end
+ 
+ }
