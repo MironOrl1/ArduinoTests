@@ -3,9 +3,9 @@
  #define buzzer 3
  #define diodaA 5
  
-float temp = 0
-float gaz = 0
-int stan = 1
+float temp = 0;
+float gaz = 0;
+int stan = 1;
 
 //stan 1 - start oraz gdy ostatnia Temp i Gaz w normie
 //stan 2 - gdy ostatnio przekroczono Temp ale Gaz w normie
@@ -14,9 +14,9 @@ int stan = 1
 
  void setings() {
  
- pinMode(buzzer, OUTPUT)
- pinMode(diodaA, OUTPUT)
- alarm("off")
+ pinMode(buzzer, OUTPUT);
+ pinMode(diodaA, OUTPUT);
+ alarm("off");
  }
   
 void loop() {
@@ -25,12 +25,12 @@ void loop() {
  
    
   if PrzekroczonoGaz(wart)==true{
-   alarm("off")
+   alarm("off");
   else
-   alarm("on")
+   alarm("on");
   }
  else
-   alarm("off")
+   alarm("off");
   }
 }
 
@@ -41,12 +41,12 @@ void loop() {
 
 void alarm(String OnOrOff) {
  if OnOrOff =="on"{
-  digitalWrite(buzzer , HIGH)
-  digitalWrite(diodaA , HIGH)
+  digitalWrite(buzzer , HIGH);
+  digitalWrite(diodaA , HIGH);
 
  else
-  digitalWrite(buzzer , LOW)
-  digitalWrite(diodaA , LOW)
+  digitalWrite(buzzer , LOW);
+  digitalWrite(diodaA , LOW);
  }
 }
  
@@ -71,9 +71,9 @@ switch (stan) {
 boolean PrzekroczonoMinTemp(float tempLimit) {
  
  if analogRead(float czujnikTemp) < tempLimit then
-  return true
+  return true;
  else
-  return false
+  return false;
  end
  
 }
@@ -81,9 +81,9 @@ boolean PrzekroczonoMinTemp(float tempLimit) {
 boolean PrzekroczonoSterzenieGazu(float GazLimit) {
  
  if analogRead(czujnikGazu) > GazLimit then
-  return true
+  return true;
  else
-  return false
+  return false;
  end
  
 }
