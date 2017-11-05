@@ -1,0 +1,52 @@
+#include <LiquidCrystal.h> //Dołączenie bilbioteki
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7); //Informacja o podłączeniu nowego wyświetlacza
+bolean rozpoczete = false;
+int przycisk=12;
+
+bolean postacWpowietrzu=false;
+int czasWpowietrzu;
+int przeszkoda[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} //tworzenie pustej macieży 16x1
+ 
+void setup() {
+  pinMode(przycisk, INPUT_PULLUP);
+  
+  lcd.begin(16, 2); //Deklaracja typu
+  lcd.setCursor(1, 0); //Ustawienie kursora
+  lcd.print("Prosta gra"); //Wyświetlenie tekstu
+  lcd.setCursor(0, 1); //Ustawienie kursora
+  lcd.print("Nr. 1  Ver 0.01"); //Wyświetlenie tekstu 
+  
+
+}
+ 
+void loop() {
+  while (rozpoczete==false) then {
+    if (digitalRead(przycisk)==LOW) then {
+    rozpoczete=true
+    }
+  }
+  lcd.clear() // czyszczenie
+  
+  pokazBohatera()
+    
+}
+
+void pokazBohatera() {
+if (postacWpowietrzu==false) then  {
+  lcd.setCursor(1, 1); //Ustawienie kursora
+  lcd.print("A"); //Wyświetlenie bohatera
+  }
+  else
+  {
+    lcd.setCursor(1, 1); //Ustawienie kursora
+    lcd.print("A"); //Wyświetlenie bohatera
+   }
+
+
+}
+
+void pokazPrzeszkody() {
+
+
+
+}
