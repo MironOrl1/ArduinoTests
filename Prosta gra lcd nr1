@@ -1,42 +1,56 @@
 #include <LiquidCrystal.h> //Dołączenie bilbioteki
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7); //Informacja o podłączeniu nowego wyświetlacza
-bolean rozpoczete = false;
-int przycisk=12;
+bolean graRozpoczeta = false;
+int pinPrzycisku=12;
 
 bolean postacWpowietrzu=false;
 int czasWpowietrzu=0;
-int przeszkoda[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} //tworzenie pustej macieży 16x1
+int przeszkody[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //tworzenie pustej macierzy 16x1 o nazwie przeszkody
  
 void setup() {
-  pinMode(przycisk, INPUT_PULLUP);
-  
+  pinMode(pinPrzycisku, INPUT_PULLUP);
   lcd.begin(16, 2); //Deklaracja typu
-  lcd.setCursor(1, 0); //Ustawienie kursora
-  lcd.print("Prosta gra"); //Wyświetlenie tekstu
-  lcd.setCursor(0, 1); //Ustawienie kursora
-  lcd.print("Nr. 1  Ver 0.01"); //Wyświetlenie tekstu 
+  WyswietlEkranStartowy() ;
   
-
+  randomSeed(analogRead(0)); // zapewnia, że losowane liczby są w pełni losowe
+  // if analog input pin 0 is unconnected, random analog
+  // noise will cause the call to randomSeed() to generate
+  // different seed numbers each time the sketch runs.
+  // randomSeed() will then shuffle the random function.
 }
  
 void loop() {
-  while (rozpoczete==false) then {
-    if (digitalRead(przycisk)==LOW) then {
-    rozpoczete=true
+  while (graRozpoczeta==false) then {
+    if (digitalRead(pinPrzycisku)==LOW) then { // rozpocznij grę, gdy naciśnięto przycisk
+    graRozpoczeta=true;
     }
   }
-  lcd.clear() // czyszczenie
   
-  pokazBohatera()
-  pokazPrzeszkody()
+  lcd.clear(); // czyszczenie ekranu
+  pokazBohatera();
+  pokazPrzeszkody();
   
+  sprawdzKolizje();
+  skoczJezeliPostacJestNaZiemiOrazNacisnietoPrzycisk();
+  jezeliMinolCzasSpadaniaToOpadnij(); // jeżeli minęło x tur to postac opada na ziemie
   
-  delay(200)
-  
+  delay(200);
+  JezeliNadalWpowietrzuToDodajCzas();
+  LosujPrzeszkodeNaOstatniejPozycji();
   
 }
 
 // ---------------------------------------------------
+
+void WyswietlEkranStartowy() {
+  lcd.clear(); //czysc ekran
+  lcd.setCursor(1, 0); //Ustawienie kursora
+  lcd.print("Prosta gra"); //Wyświetlenie tekstu
+  lcd.setCursor(0, 1); //Ustawienie kursora
+  lcd.print("Nr. 1  Ver 0.01"); //Wyświetlenie tekstu
+
+}
+
 
 void pokazBohatera() {
 if (postacWpowietrzu==false) then  {
@@ -54,9 +68,70 @@ if (postacWpowietrzu==false) then  {
 
 void pokazPrzeszkody() {
   for (int i=0; i <= 15; i++){
-      lcd.setCursor(przeszkoda[i], 1); //Ustawienie kursora w pozycji "i"
+      lcd.setCursor(przeszkody[i], 1); //Ustawienie kursora w pozycji "i"
       lcd.print("/"); //Wyświetlenie przeszkody na pozycji "i"
    } 
 
 
+}
+
+void sprawdzKolizje() {
+   
+   If (przeszkody[1]==1 && postacWpowietrzu ==false) then {
+      delay(1000);
+      lcd.clear();
+      delay(100);
+      lcd.setCursor(2,0);
+      lcd.print("Przegrales");
+      lcd.setCursor(2,1);
+      lcd.print("Game Over");
+      mrugnij();
+      mrugnij();
+      mrugnij();
+      WyswietlEkranStartowy();
+      graRozpoczeta = false;
+   }
+   void mrugnij() {
+      lcd.noDisplay();
+      delay(300);
+      lcd.display();
+      delay(300);
+   }
+}
+
+void skoczJezeliPostacJestNaZiemiOrazNacisnietoPrzycisk() {
+    if (digitalRead(pinPrzycisku)==LOW && postacWpowietrzu) then {
+       postacWpowietrzu=true;
+    }
+}
+
+void jezeliMinolCzasSpadaniaToOpadnij() {
+    if czasWpowietrzu==2 then {
+	postacWpowietrzu=false;
+	czasWpowietrzu=0;
+    }
+}
+
+void JezeliNadalWpowietrzuToDodajCzas() {
+  if postacWpowietrzu==true then {
+	czasWpowietrzu=czasWpowietrzu+1;
+    }
+}
+
+
+void LosujPrzeszkodeNaOstatniejPozycji() {
+    
+    
+    // 
+    for (int i=0; i <= 14; i++) {
+     przeszkody[i]=przeszkody[i+1] ;
+    }
+    
+    if (przeszkody[14]=0 && przeszkody[13] = 0) { // zapewnij, że przed losowaniem pozycje 13 i 14 macierzy są puste.
+	przeszkody[15] = random(0,2); // losuj losową liczbę od (0) do (2-1=1) na pozycji 15 macierzy  	
+    }
+      else { // jeżeli 14 lub 13 jest zajęte, to wstaw puste pole w pozycji 15, aby łatwej było przeskakiwać.
+	przeszkody[15]=0;
+      }
+    
 }
