@@ -1,11 +1,11 @@
 #include <LiquidCrystal.h> //Dołączenie bilbioteki
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7); //Informacja o podłączeniu nowego wyświetlacza
-bolean graRozpoczeta = false;
+boolean graRozpoczeta = false;
 int pinPrzycisku=12;
 
-bolean postacWpowietrzu=false;
+boolean postacWpowietrzu=false;
 int czasWpowietrzu=0;
-int przeszkody[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //tworzenie pustej macierzy 16x1 o nazwie przeszkody
+int przeszkody[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //tworzenie pustej macierzy 16x1 o nazwie przeszkody
  
 void setup() {
   pinMode(pinPrzycisku, INPUT_PULLUP);
@@ -20,8 +20,8 @@ void setup() {
 }
  
 void loop() {
-  while (graRozpoczeta==false) then {
-    if (digitalRead(pinPrzycisku)==LOW) then { // rozpocznij grę, gdy naciśnięto przycisk
+  while (graRozpoczeta==false) {
+    if (digitalRead(pinPrzycisku)==LOW) { // rozpocznij grę, gdy naciśnięto przycisk
     graRozpoczeta=true;
     }
   }
@@ -53,7 +53,7 @@ void WyswietlEkranStartowy() {
 
 
 void pokazBohatera() {
-if (postacWpowietrzu==false) then  {
+if (postacWpowietrzu==false)  {
   lcd.setCursor(1, 1); //Ustawienie kursora
   lcd.print("A"); //Wyświetlenie bohatera
   }
@@ -77,7 +77,10 @@ void pokazPrzeszkody() {
 
 void sprawdzKolizje() {
    
-   If (przeszkody[1]==1 && postacWpowietrzu ==false) then {
+  
+
+   
+   if (przeszkody[1]==1 && postacWpowietrzu ==false) {
       delay(1000);
       lcd.clear();
       delay(100);
@@ -85,35 +88,36 @@ void sprawdzKolizje() {
       lcd.print("Przegrales");
       lcd.setCursor(2,1);
       lcd.print("Game Over");
-      mrugnij();
-      mrugnij();
-      mrugnij();
+      mrugnijWyswiedlaczem();
+      mrugnijWyswiedlaczem();
+      mrugnijWyswiedlaczem();
       WyswietlEkranStartowy();
       graRozpoczeta = false;
    }
-   void mrugnij() {
+   
+}
+  void mrugnijWyswiedlaczem() {
       lcd.noDisplay();
       delay(300);
       lcd.display();
       delay(300);
    }
-}
 
 void skoczJezeliPostacJestNaZiemiOrazNacisnietoPrzycisk() {
-    if (digitalRead(pinPrzycisku)==LOW && postacWpowietrzu) then {
+    if (digitalRead(pinPrzycisku)==LOW && postacWpowietrzu)  {
        postacWpowietrzu=true;
     }
 }
 
 void jezeliMinolCzasSpadaniaToOpadnij() {
-    if czasWpowietrzu==2 then {
+    if (czasWpowietrzu==2)  {
 	postacWpowietrzu=false;
 	czasWpowietrzu=0;
     }
 }
 
 void JezeliNadalWpowietrzuToDodajCzas() {
-  if postacWpowietrzu==true then {
+  if (postacWpowietrzu==true)  {
 	czasWpowietrzu=czasWpowietrzu+1;
     }
 }
@@ -127,7 +131,7 @@ void LosujPrzeszkodeNaOstatniejPozycji() {
      przeszkody[i]=przeszkody[i+1] ;
     }
     
-    if (przeszkody[14]=0 && przeszkody[13] = 0) { // zapewnij, że przed losowaniem pozycje 13 i 14 macierzy są puste.
+    if (przeszkody[14]==0 && przeszkody[13] == 0) { // zapewnij, że przed losowaniem pozycje 13 i 14 macierzy są puste.
 	przeszkody[15] = random(0,2); // losuj losową liczbę od (0) do (2-1=1) na pozycji 15 macierzy  	
     }
       else { // jeżeli 14 lub 13 jest zajęte, to wstaw puste pole w pozycji 15, aby łatwej było przeskakiwać.
