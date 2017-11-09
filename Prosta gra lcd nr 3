@@ -1,0 +1,261 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
+#define LCDkomX 16
+#define LCDkomY 2
+#define LCDkratkiX 5
+#define LCDkratkiY 7
+
+
+
+int pozycjaPacMana[]  ={3 , 3}; // (-x , -y) globalne
+int pozycjaJedzenia[] ={0 , 0}; // (-x , -y) globalne
+byte kom[]= {0,0};
+byte Punkt[] = {0,0};
+
+byte punkty = 0;
+
+char kierunek = 'S';
+
+byte smiley[7] = {
+  B00000,
+  B10001,
+  B00000,
+  B00000,
+  B10001,
+  B01110,
+  B00000,
+};
+
+byte pustaCzcionka[7] = {
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+};
+
+
+void setup() {
+  lcd.begin(LCDkomX, LCDkomY);
+  lcd.createChar(0, smiley);
+  lcd.write(byte(0));
+  
+  Serial.begin(9600);
+  
+  randomSeed(analogRead(A1));
+  
+}
+
+void loop() {
+  
+  idz();
+  skomponujCzcionki();
+  pokazPacManaIjedzenie();
+  pokazPunkty();
+  
+  lcd.clear();
+  lcd.setCursor(0,0);
+  for (int i=0 ; (i<8) ; i++) {
+    lcd.write(byte(i));
+  }
+}
+//kolumny 16x5
+
+//wiersze 2x7
+
+//macierz(16x5 , 2x7)
+
+void idz(){
+  
+  if (CzyPacManJestNaKrawedzi(kierunek)==false) {
+    
+    switch (kierunek) {
+      case 'N':
+	pozycjaPacMana[1]=pozycjaPacMana[1]-1;
+	break;
+      case 'S':
+	pozycjaPacMana[1]=pozycjaPacMana[1]+1;
+	break;
+      case 'E':
+	pozycjaPacMana[0]=pozycjaPacMana[0]+1;
+	break;
+      case 'W':
+	pozycjaPacMana[0]=pozycjaPacMana[0]-1;
+	break;
+     }
+  }
+   else {
+      switch (kierunek) {
+       case 'N':
+	pozycjaPacMana[1]=LCDkomY*LCDkratkiY-1;
+	break;
+      case 'S':
+	pozycjaPacMana[1]=0;
+	break;
+      case 'E':
+	pozycjaPacMana[0]=0;
+	break;
+      case 'W':
+	pozycjaPacMana[0]=LCDkomX*LCDkratkiX-1  -5; // -5 to miejsce na ramke punktacji
+	break;
+      }
+    }
+  
+}
+
+
+void pokazPunkty() {
+  int mJednosci;
+  int mDzesietne;
+  
+  if (punkty==100) {
+    punkty=1 ;
+  }  
+  mDzesietne= punkty / 10;
+  mJednosci = punkty - mDzesietne;
+  lcd.setCursor(15,0);
+  lcd.print(mDzesietne);
+  lcd.setCursor(15,1);
+  lcd.print(mJednosci);
+}
+
+
+boolean CzyPacManJestNaKrawedzi(char kier) {
+  boolean log=false;
+  switch (kier) {
+   case 'N':
+     if (pozycjaPacMana[1]==0) {
+      log = true;
+     }
+     break;
+   case 'S':
+     if (pozycjaPacMana[1]== LCDkomY*LCDkratkiY-1) {
+      log = true; 
+     }
+     break;
+   case 'E':
+     if (pozycjaPacMana[0]== LCDkomX*LCDkratkiX-1  -5) {  // -5 to miejsce na ramke punktacji
+      log = true; 
+     }     
+     break;
+   case 'W':
+     if (pozycjaPacMana[0]==0) {
+      log = true; 
+     }
+     break;
+     
+ }
+  return log;
+}
+  
+
+
+void sprawdzCzyPacManZjadl() {
+  
+  // sprawdź czy PacMan i jedzenie jest w tym samym punkcie i komórce.
+  if (pozycjaPacMana[0]==pozycjaJedzenia[0] && pozycjaPacMana[1]==pozycjaJedzenia[1]) {
+    punkty = punkty+1;
+    losujPozycjeJedzenia();
+  }
+  
+}
+
+void losujPozycjeJedzenia(){
+  
+  pozycjaJedzenia[0]=random(0,LCDkomX*LCDkratkiX-1 -5);
+  pozycjaJedzenia[1]=random(0,LCDkomY*LCDkratkiY-1);
+}
+
+
+void skomponujCzcionki() {
+  byte komP[2];
+  byte komJ[2];
+  byte pnkP[2];
+  byte pnkJ[2];
+   
+   rozdzielPozycjeGlobalnaNaKomorke(pozycjaPacMana[0], pozycjaPacMana[1] );
+   komP[0] = kom[0];
+   komP[1] = kom[1];
+   rozdzielPozycjeGlobalnaNaKomorke(pozycjaJedzenia[0], pozycjaJedzenia[1] );
+   komJ[0] = kom[0];
+   komJ[1] = kom[1];
+   
+   rozdzielPozycjeGlobalnaNaPunktKomorki(pozycjaPacMana[0], pozycjaPacMana[1] );
+   komP[0] = Punkt[0];
+   komP[1] = Punkt[1];
+   rozdzielPozycjeGlobalnaNaPunktKomorki(pozycjaJedzenia[0], pozycjaJedzenia[1] );
+   pnkJ[0] = Punkt[0];
+   pnkJ[1] = Punkt[1];
+   
+   byte znakP = pustaCzcionka;
+   byte znakJ = pustaCzcionka;
+   
+   zamalujPunktCzcionki(znakP , komP[0] , komP[1]);
+   
+   
+   if (ObiektySaWtejSamejKom(komP,komJ) ==true) {
+    //jednaCzcionka z Pacmanem i jedzeniem 
+     zamalujPunktCzcionki(znakP , komJ[0] , komJ[1]);
+     lcd.createChar(0,znakP);
+   }
+   else {
+    //dwie czcionki 
+     zamalujPunktCzcionki(znakJ , komJ[0] , komJ[1]);
+     lcd.createChar(0,znakP);
+     lcd.createChar(1,znakJ);
+   }
+   
+   
+   
+}
+
+boolean ObiektySaWtejSamejKom(byte komP[2] , byte komJ[2]) {
+  
+  if (komP[0] == komJ[0] && komP[1] == komJ[1]) {
+    return true;
+  }
+  else {
+    
+    return false;
+  }
+  
+}
+
+
+
+void pokazPacManaIjedzenie() {
+  
+  
+}
+
+void rozdzielPozycjeGlobalnaNaKomorke(int xGlobalne , int yGlobalne) {
+
+  kom[0] = (xGlobalne-1) / (LCDkratkiX - 5);
+  kom[1] = (yGlobalne-1) / LCDkratkiY;
+}
+
+void rozdzielPozycjeGlobalnaNaPunktKomorki(int xGlobalne , int yGlobalne) {
+  
+  Punkt[0] = (xGlobalne-1) / (LCDkomX- 1);
+  Punkt[1] = (yGlobalne-1) / LCDkomY;
+}
+
+
+
+void zamalujPunktCzcionki(byte czcionka[7] , int columnX , int rowY) {
+  bitWrite(czcionka[rowY], (LCDkratkiX-columnX), 1);
+}
+
+void wymazPunktCzcionki(byte czcionka[7] , int columnX , int rowY) {
+  bitWrite(czcionka[rowY], (LCDkratkiX-columnX), 0);
+}
+
+
+
+
+
+
+
