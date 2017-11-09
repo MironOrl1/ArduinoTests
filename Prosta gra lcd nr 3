@@ -42,11 +42,8 @@ void setup() {
   lcd.begin(LCDkomX, LCDkomY);
   lcd.createChar(0, smiley);
   lcd.write(byte(0));
-  
   Serial.begin(9600);
-  
   randomSeed(analogRead(A1));
-  
 }
 
 void loop() {
@@ -106,7 +103,6 @@ void idz(){
   
 }
 
-
 void pokazPunkty() {
   int mJednosci;
   int mDzesietne;
@@ -121,7 +117,6 @@ void pokazPunkty() {
   lcd.setCursor(15,1);
   lcd.print(mJednosci);
 }
-
 
 boolean CzyPacManJestNaKrawedzi(char kier) {
   boolean log=false;
@@ -151,8 +146,6 @@ boolean CzyPacManJestNaKrawedzi(char kier) {
   return log;
 }
   
-
-
 void sprawdzCzyPacManZjadl() {
   
   // sprawdź czy PacMan i jedzenie jest w tym samym punkcie i komórce.
@@ -190,8 +183,14 @@ void skomponujCzcionki() {
    pnkJ[0] = Punkt[0];
    pnkJ[1] = Punkt[1];
    
-   byte znakP = pustaCzcionka;
-   byte znakJ = pustaCzcionka;
+   byte znakP[7];
+   for (int i =0; i<2 ; i++) {
+   znakP[i] = pustaCzcionka[i];  
+   }
+   byte znakJ[7];
+   for (int i =0; i<2 ; i++) {
+     znakJ[i] = pustaCzcionka[i];  
+   }
    
    zamalujPunktCzcionki(znakP , komP[0] , komP[1]);
    
@@ -224,8 +223,6 @@ boolean ObiektySaWtejSamejKom(byte komP[2] , byte komJ[2]) {
   
 }
 
-
-
 void pokazPacManaIjedzenie() {
   
   
@@ -252,10 +249,3 @@ void zamalujPunktCzcionki(byte czcionka[7] , int columnX , int rowY) {
 void wymazPunktCzcionki(byte czcionka[7] , int columnX , int rowY) {
   bitWrite(czcionka[rowY], (LCDkratkiX-columnX), 0);
 }
-
-
-
-
-
-
-
