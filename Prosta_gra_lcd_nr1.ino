@@ -1,11 +1,11 @@
 #include <LiquidCrystal.h> //Dołączenie bilbioteki
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7); //Informacja o podłączeniu nowego wyświetlacza
+
 boolean graRozpoczeta = false;
 int pinPrzycisku=12;
-
 boolean postacWpowietrzu=false;
 int czasWpowietrzu=0;
-int przeszkody[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //tworzenie pustej macierzy 16x1 o nazwie przeszkody
+byte przeszkody[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //tworzenie pustej macierzy 16x1 o nazwie przeszkody
  
 void setup() {
   pinMode(pinPrzycisku, INPUT_PULLUP);
@@ -32,9 +32,10 @@ void loop() {
   
   sprawdzKolizje();
   skoczJezeliPostacJestNaZiemiOrazNacisnietoPrzycisk();
+  delay(1000);
   jezeliMinolCzasSpadaniaToOpadnij(); // jeżeli minęło x tur to postac opada na ziemie
   
-  delay(200);
+  
   JezeliNadalWpowietrzuToDodajCzas();
   LosujPrzeszkodeNaOstatniejPozycji();
   
@@ -59,7 +60,7 @@ if (postacWpowietrzu==false)  {
   }
   else
   {
-    lcd.setCursor(1, 1); //Ustawienie kursora
+    lcd.setCursor(1, 0); //Ustawienie kursora
     lcd.print("A"); //Wyświetlenie bohatera
    }
 
@@ -76,10 +77,6 @@ void pokazPrzeszkody() {
 }
 
 void sprawdzKolizje() {
-   
-  
-
-   
    if (przeszkody[1]==1 && postacWpowietrzu ==false) {
       delay(1000);
       lcd.clear();
@@ -96,15 +93,15 @@ void sprawdzKolizje() {
    }
    
 }
-  void mrugnijWyswiedlaczem() {
-      lcd.noDisplay();
-      delay(300);
-      lcd.display();
-      delay(300);
-   }
+void mrugnijWyswiedlaczem() {
+   lcd.noDisplay();
+   delay(300);
+   lcd.display();
+   delay(300);
+}
 
 void skoczJezeliPostacJestNaZiemiOrazNacisnietoPrzycisk() {
-    if (digitalRead(pinPrzycisku)==LOW && postacWpowietrzu)  {
+    if (digitalRead(pinPrzycisku)==LOW && postacWpowietrzu == false)  {
        postacWpowietrzu=true;
     }
 }
@@ -123,19 +120,15 @@ void JezeliNadalWpowietrzuToDodajCzas() {
 }
 
 
-void LosujPrzeszkodeNaOstatniejPozycji() {
-    
-    
-    // 
+void LosujPrzeszkodeNaOstatniejPozycji() { 
     for (int i=0; i <= 14; i++) {
-     przeszkody[i]=przeszkody[i+1] ;
+        przeszkody[i]=przeszkody[i+1] ;
     }
     
     if (przeszkody[14]==0 && przeszkody[13] == 0) { // zapewnij, że przed losowaniem pozycje 13 i 14 macierzy są puste.
 	przeszkody[15] = random(0,2); // losuj losową liczbę od (0) do (2-1=1) na pozycji 15 macierzy  	
     }
-      else { // jeżeli 14 lub 13 jest zajęte, to wstaw puste pole w pozycji 15, aby łatwej było przeskakiwać.
+    else { // jeżeli 14 lub 13 jest zajęte, to wstaw puste pole w pozycji 15, aby łatwej było przeskakiwać.
 	przeszkody[15]=0;
-      }
-    
+    }
 }
