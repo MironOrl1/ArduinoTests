@@ -60,6 +60,8 @@ void loop() {
   
 }
 
+//--------------------------------------------
+
 void PoczatekTestu(){
   lcd.clear();
   lcd.setCursor(0,0);
@@ -93,6 +95,8 @@ void test() {
   }
    
 }
+
+//--------------------------------------------
 
 void generujLosowyCzasWyzwolenia() {
   czasWyzwolenia = random(1000,8000);
