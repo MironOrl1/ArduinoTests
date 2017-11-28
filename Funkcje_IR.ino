@@ -25,7 +25,6 @@ Void WykonajPomiarIRiPokazWynik() {
 
 }
 
-
 void WykonajPomiarIRiSprawdzRodzajProtokolu(){
   if (irrecv.decode(&results)){
         Serial.println(results.value, HEX);
